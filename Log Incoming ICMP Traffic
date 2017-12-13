@@ -8,7 +8,7 @@ def rules(pkt):
   try:
       if (pkt[IP].dst=="192.168.13.110") and (pkt[ICMP]):
         print str(pkt[IP].src) + " is exploitable"
-  excecpt:
+  except:
       pass
 
 print "Listening for Incoming ICMP Traffic.  Use Ctrl+C to stop listening"
