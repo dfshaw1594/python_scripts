@@ -1,0 +1,10 @@
+#!/usr/bin/python
+
+from scapy.all import *
+from time import sleep
+import thread
+import random
+import logging
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
+
+if len(sys.argv) != 4:
