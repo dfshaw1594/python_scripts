@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# Goofile doesn't work with newer versions of kali
+
 echo "Enter target domain: "
 read domain
 if [[ $domain != ""]]; then
