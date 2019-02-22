@@ -1,3 +1,6 @@
+#Gets Ip
+# python2
+
 import os
 import socket
 
