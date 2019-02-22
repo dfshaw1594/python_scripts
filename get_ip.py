@@ -3,7 +3,7 @@ import socket
 
 if os.name != "nt":
     import fcntl
-    import struck
+    import struct
     
     def get_interface_ip(ifname):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -13,7 +13,7 @@ def get_lan_ip():
     ip = socket.gethostbyname(socket.gethostname())
     if ip.startswith("127.") and os.name != "nt":
         interfaces = ["eth0", "eth1", "eth2", "wlan0", "wlan1", "ath0", "ath1", "ppp0"]
-        for infname in interfaces:
+        for ifname in interfaces:
             try:
                 ip = get_interface_ip(ifname)
                 break
