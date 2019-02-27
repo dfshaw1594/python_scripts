@@ -1,4 +1,6 @@
 #  Gets public ip  
+#  target url = "http://ip.42.pl/raw"
+
 
 def get_public_ip(request_target):
     grabber = urllib2.build_opener()
@@ -10,4 +12,5 @@ def get_public_ip(request_target):
     except urllib2.URLError, error:
         print("There was an error trying to get your Public IP:  %s") % (error)
     return public_ip_address
-    
+
+# print(get_public_ip("http://ip.42.pl/raw"))
