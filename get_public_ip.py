@@ -1,5 +1,5 @@
 #  Gets public ip  
-#  target url = "http://ip.42.pl/raw"
+#  
 
 
 def get_public_ip(request_target):
@@ -13,4 +13,14 @@ def get_public_ip(request_target):
         print("There was an error trying to get your Public IP:  %s") % (error)
     return public_ip_address
 
-# print(get_public_ip("http://ip.42.pl/raw"))
+public_ip = "None"
+target_url = "http://ip.42.pl/raw"
+public_ip = get_public_ip(target_url)
+if not "None" in public_ip:
+    print("Your Public IP address is: %s") % (str(public_ip))
+else:
+    print("Your Public IP address was not found.")
+  
+
+
+
