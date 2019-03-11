@@ -1,6 +1,7 @@
 #  Gets public ip  
 #  
 
+import urllib2
 
 def get_public_ip(request_target):
     grabber = urllib2.build_opener()
