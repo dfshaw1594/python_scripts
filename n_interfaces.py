@@ -1,5 +1,6 @@
 # Network interface functions using netifaces libaries
 
+import netifaces
 
 def get_interfaces():
     interfaces = netifaces.interfaces()
