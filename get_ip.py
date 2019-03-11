@@ -1,5 +1,7 @@
-#Gets Ip
-# python2
+#  Gets Ip
+#  python2
+#  Change interface if necessary
+
 
 import os
 import socket
@@ -25,6 +27,6 @@ def get_lan_ip():
                 
     return ip
  
- 
+ print(get_interface_ip('eth0'))
                    
             
