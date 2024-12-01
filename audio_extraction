@@ -1,0 +1,101 @@
+import os
+import pandas as pd
+from yt_dlp import YoutubeDL
+from urllib.parse import urlparse, parse_qs, urlencode
+
+def clean_youtube_url(url):
+    """Remove playlist parameters and keep only video ID"""
+    if 'youtube.com' in url or 'youtu.be' in url:
+        # Parse the URL
+        parsed_url = urlparse(url)
+        # Get URL parameters
+        params = parse_qs(parsed_url.query)
+        
+        # Keep only the video ID parameter
+        if 'v' in params:
+            clean_params = {'v': params['v'][0]}
+            # Reconstruct the URL with only video ID
+            return f"https://www.youtube.com/watch?{urlencode(clean_params)}"
+    return url
+
+def download_youtube_audio(csv_file):
+    # Create default directory
+    download_folder = "youtube_downloads"
+    if not os.path.exists(download_folder):
+        os.makedirs(download_folder)
+    
+    # Configure yt-dlp options
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'outtmpl': os.path.join(download_folder, '%(title)s.%(ext)s'),
+        'quiet': False,
+        'noplaylist': True,
+        'extract_flat': False,
+        'nooverwrites': True,
+        'ignoreerrors': True,
+        'no_warnings': True
+    }
+    
+    # Read CSV file for URLs
+    try:
+        data = pd.read_csv(csv_file)
+        if "url" not in data.columns:
+            print("CSV must contain a column named 'url'")
+            return
+    except Exception as e:
+        print(f"Error reading CSV file: {e}")
+        return
+    
+    # Clean URLs and remove duplicates
+    data['url'] = data['url'].apply(clean_youtube_url)
+    original_count = len(data)
+    data = data.drop_duplicates(subset=['url'], keep='first')
+    duplicate_count = original_count - len(data)
+    
+    if duplicate_count > 0:
+        print(f"\nFound {duplicate_count} duplicate URLs - these will be skipped.")
+    
+    # Keep track of processed URLs
+    processed_urls = set()
+    failed_urls = []
+    
+    print(f"\nPreparing to download {len(data)} unique tracks...")
+    
+    # Download audio from each URL
+    with YoutubeDL(ydl_opts) as ydl:
+        for index, row in data.iterrows():
+            url = row['url'].strip()
+            
+            if url in processed_urls:
+                print(f"\nSkipping duplicate URL: {url}")
+                continue
+                
+            try:
+                print(f"\nProcessing URL {len(processed_urls) + 1}/{len(data)}: {url}")
+                ydl.download([url])
+                processed_urls.add(url)
+            except Exception as e:
+                print(f"Error downloading {url}: {e}")
+                failed_urls.append(url)
+                continue
+
+    print(f"\nDownload process completed!")
+    print(f"Successfully processed: {len(processed_urls)} URLs")
+    if failed_urls:
+        print(f"Failed downloads: {len(failed_urls)}")
+        print("Failed URLs:")
+        for url in failed_urls:
+            print(url)
+
+if __name__ == "__main__":
+    # Prompt for CSV file
+    csv_file = input("Enter the path to the CSV file containing YouTube URLs: ").strip()
+    
+    print("\nStarting download process...")
+    print("Files will be saved in the 'youtube_downloads' folder")
+    download_youtube_audio(csv_file)
